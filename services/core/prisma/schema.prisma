@@ -1,0 +1,135 @@
+// LabLock — primary Prisma schema
+// Owns all DB migrations. Auth service connects to the same DB and has its own
+// minimal schema (User + Role only) just for client generation.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  student
+  supervisor
+  admin
+}
+
+enum Condition {
+  good
+  needs_service
+  broken
+}
+
+enum BookingStatus {
+  requested
+  approved
+  rejected
+  in_use
+  returned
+  cancelled
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  name         String
+  role         Role     @default(student)
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  bookings              Booking[]
+  supervisedEquipment   Equipment[]              @relation("SupervisorEquipment")
+  statusChanges         BookingStatusHistory[]   @relation("Actor")
+  availabilityEntries   SupervisorAvailability[]
+
+  @@index([role])
+  @@map("user")
+}
+
+model LabRoom {
+  id        String      @id @default(uuid())
+  name      String      @unique
+  capacity  Int
+  building  String
+  equipment Equipment[]
+
+  @@map("lab_room")
+}
+
+model Equipment {
+  id           String    @id @default(uuid())
+  name         String
+  category     String
+  condition    Condition @default(good)
+  quantity     Int       @default(1)
+  labRoomId    String    @map("lab_room_id")
+  supervisorId String?   @map("supervisor_id")
+  isActive     Boolean   @default(true) @map("is_active")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  labRoom    LabRoom   @relation(fields: [labRoomId], references: [id])
+  supervisor User?     @relation("SupervisorEquipment", fields: [supervisorId], references: [id])
+  bookings   Booking[]
+
+  @@index([category])
+  @@index([labRoomId])
+  @@index([supervisorId])
+  @@index([isActive])
+  @@map("equipment")
+}
+
+model Booking {
+  id                String        @id @default(uuid())
+  requesterId       String        @map("requester_id")
+  equipmentId       String        @map("equipment_id")
+  startTime         DateTime      @map("start_time")
+  endTime           DateTime      @map("end_time")
+  status            BookingStatus @default(requested)
+  purpose           String
+  rejectReason      String?       @map("reject_reason")
+  returnedCondition Condition?    @map("returned_condition")
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @updatedAt @map("updated_at")
+
+  requester User                   @relation(fields: [requesterId], references: [id])
+  equipment Equipment              @relation(fields: [equipmentId], references: [id])
+  history   BookingStatusHistory[]
+
+  @@index([equipmentId, startTime, endTime])
+  @@index([requesterId, status])
+  @@index([status])
+  @@map("booking")
+}
+
+model BookingStatusHistory {
+  id         String         @id @default(uuid())
+  bookingId  String         @map("booking_id")
+  actorId    String         @map("actor_id")
+  fromStatus BookingStatus? @map("from_status")
+  toStatus   BookingStatus  @map("to_status")
+  note       String?
+  createdAt  DateTime       @default(now()) @map("created_at")
+
+  booking Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  actor   User    @relation("Actor", fields: [actorId], references: [id])
+
+  @@index([bookingId])
+  @@map("booking_status_history")
+}
+
+model SupervisorAvailability {
+  id            String  @id @default(uuid())
+  supervisorId  String  @map("supervisor_id")
+  day           DateTime @db.Date
+  isAvailable   Boolean @default(true) @map("is_available")
+  reason        String?
+
+  supervisor User @relation(fields: [supervisorId], references: [id])
+
+  @@unique([supervisorId, day])
+  @@map("supervisor_availability")
+}

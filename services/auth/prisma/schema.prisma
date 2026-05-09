@@ -1,0 +1,31 @@
+// auth-service Prisma schema — User + Role only.
+// The User table is owned and migrated by core-service. This file exists
+// solely so auth-service can generate a typed Prisma client against the
+// same Postgres DB.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  student
+  supervisor
+  admin
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  name         String
+  role         Role     @default(student)
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("user")
+}
