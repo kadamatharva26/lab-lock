@@ -1,0 +1,26 @@
+{
+  "name": "lablock",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Campus lab equipment booking with three-way conflict resolution — SE ZG503 full stack assignment.",
+  "workspaces": [
+    "frontend",
+    "gateway",
+    "services/*"
+  ],
+  "scripts": {
+    "dev:auth": "npm --workspace services/auth run dev",
+    "dev:core": "npm --workspace services/core run dev",
+    "dev:gateway": "npm --workspace gateway run dev",
+    "dev:frontend": "npm --workspace frontend run dev",
+    "dev": "concurrently -n auth,core,gateway,frontend -c magenta,cyan,yellow,green \"npm:dev:auth\" \"npm:dev:core\" \"npm:dev:gateway\" \"npm:dev:frontend\"",
+    "db:migrate": "npm --workspace services/core run db:migrate",
+    "db:seed": "npm --workspace services/core run db:seed",
+    "test": "npm --workspace services/core run test",
+    "build:frontend": "npm --workspace frontend run build"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "license": "MIT"
+}
