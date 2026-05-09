@@ -136,24 +136,7 @@ npm run test --workspace=services/core
 | UC-3 | Request a booking with three-way conflict detection | `EquipmentDetailPage.jsx` + `services/core/src/lib/conflict.js` |
 | UC-4 | Admin approves / rejects, marks in-use, marks returned | `AdminBookingsPage.jsx` + `services/core/src/lib/stateMachine.js` |
 | UC-5 | Student views & cancels their own bookings | `MyBookingsPage.jsx` |
-| UC-6 | Admin dashboard with utilization chart | `AdminDashboardPage.jsx` + `services/core/src/routes/dashboard.js` |
-
-## Roadmap (15-day plan)
-
-| Phase | Days | Deliverable | Status |
-|---|---|---|---|
-| 1. Scope + scaffold | 1–2 | Docs + monorepo + first commits | ✅ |
-| 2. Backend | 3–6 | Auth, CRUD, conflict logic, Swagger | ✅ |
-| 3. Frontend | 7–10 | All 6 screens wired up | ✅ |
-| 4. Integration + deploy | 11–12 | End-to-end on public URLs | _next_ |
-| 5. AI enhancement pass | 13 | Logged prompts + concrete refactor | _next_ |
-| 6. Docs + demo video | 14 | Reflection, video, final docs | _next_ |
-| 7. Submit | 15 | ELearn + Drive + GitHub public | _next_ |
-
-## AI Usage
-
-This project uses AI tooling (Claude) as permitted by the assignment brief. Every prompt and its disposition is logged in [`docs/ai-usage-log.md`](docs/ai-usage-log.md). The reflection in [`docs/reflection.md`](docs/reflection.md) is written entirely by hand, as required.
-
+| UC-6 | Admin dashboard with utilization chart | `AdminDashboardPage.jsx` + `services/core/
 ## License
 
 MIT — see [`LICENSE`](LICENSE).
