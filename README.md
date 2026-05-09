@@ -1,7 +1,6 @@
 # LabLock — Lab & Equipment Booking Platform
 
-> **SE ZG503 Full Stack Application Development — Individual Assignment**
-> Submitted by: _your name_ · BITS ID: _your id_ · Due: 4 May 2026
+
 
 A web platform where students book campus lab equipment and the system automatically prevents conflicts across **three dimensions simultaneously**: the equipment itself, the supervising faculty, and that supervisor's calendar availability.
 
